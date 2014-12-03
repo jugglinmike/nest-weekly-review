@@ -1,5 +1,9 @@
 {
   "extends": "../../../.jshintrc",
   "browserify": true,
-  "browser": true
+  "browser": true,
+  "globals": {
+    "define": false,
+    "console": false
+  }
 }
