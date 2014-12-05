@@ -1,4 +1,5 @@
 'use strict';
+var DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
  * Calculate the week number described by the given date.
@@ -11,9 +12,9 @@ exports.fromDate = function(date) {
   var yearBegin = new Date(date.getFullYear(), 0, 1);
   var weekBegin = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   weekBegin.setTime(
-    weekBegin.getTime() - weekBegin.getDay() * 24 * 60 * 60 * 1000
+    weekBegin.getTime() - weekBegin.getDay() * DAY_MS
   );
-  var dayCount = (weekBegin.getTime() - yearBegin.getTime()) / (24 * 60 * 60 * 1000);
+  var dayCount = (weekBegin.getTime() - yearBegin.getTime()) / DAY_MS;
 
   return Math.floor((dayCount - yearBegin.getDay()) / 7);
 };
@@ -33,6 +34,6 @@ exports.toDate = function(year, week) {
   var weekBegin = new Date(year, 0, 1 + firstSunday);
 
   return new Date(
-    weekBegin.getTime() + week * 7 * 24 * 60 * 60 * 1000
+    weekBegin.getTime() + week * 7 * DAY_MS
   );
 };
