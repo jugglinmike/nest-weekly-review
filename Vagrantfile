@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.limit = "vagrant"
-    ansible.inventory_path = "deploy/ansible/hosts"
-    ansible.playbook = "deploy/ansible/vagrant.yml"
+    ansible.inventory_path = "deploy/ansible/inventory/development"
+    ansible.playbook = "deploy/ansible/provision.yml"
   end
 end

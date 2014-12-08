@@ -1,7 +1,6 @@
 ---
 -
-  hosts: appserver
-  remote_user: ubuntu
+  hosts: all
   sudo: yes
   roles:
     - ami
@@ -9,3 +8,5 @@
     - services
     - startup
     - production
+  handlers:
+    - include: handlers.yml
