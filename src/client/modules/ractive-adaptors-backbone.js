@@ -56,7 +56,7 @@
 
   // AMD?
   else if ( typeof global.define === 'function' && global.define.amd ) {
-    window.define([ 'ractive/ractive.runtime', 'ampersand-model', 'ampersand-rest-collection' ], factory );
+    window.define([ 'node_modules/ractive/ractive.runtime', 'node_modules/ampersand-model/ampersand-model', 'node_modules/ampersand-rest-collection/ampersand-rest-collection' ], factory );
   }
 
   else {

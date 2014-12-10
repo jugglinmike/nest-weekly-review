@@ -1,11 +1,12 @@
+define(function(require, exports, module) {
 'use strict';
-var Ractive = require('ractive/ractive.runtime');
+var Ractive = require('node_modules/ractive/ractive.runtime');
 
 var weekNumber = require('../../util/week-num');
 var WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 module.exports = Ractive.extend({
-  template: require('./template.html'),
+  template: require('ractive!./template.html'),
   data: {
     firstWeek: new Date(),
     _phases: null,
@@ -70,4 +71,5 @@ module.exports = Ractive.extend({
       return weeks;
     }
   }
+});
 });

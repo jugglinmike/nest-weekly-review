@@ -1,3 +1,4 @@
+define(function(require, exports, module) {
 'use strict';
 var DAY_MS = 1000 * 60 * 60 * 24;
 var WEEK_MS = 7 * DAY_MS;
@@ -65,3 +66,4 @@ exports.toDate = function(year, week) {
 exports.between = function(first, second) {
   return (second.getTime() - first.getTime()) / WEEK_MS;
 };
+});

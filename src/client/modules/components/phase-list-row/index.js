@@ -1,11 +1,12 @@
+define(function(require, exports, module) {
 'use strict';
-var Ractive = require('ractive/ractive.runtime');
+var Ractive = require('node_modules/ractive/ractive.runtime');
 
 var weekNumber = require('../../util/week-num');
 
 module.exports = Ractive.extend({
-  template: require('./template.html'),
-  css: require('./style.css'),
+  template: require('ractive!./template.html'),
+  css: require('text!./style.css'),
   reviewUrl: function(offset) {
     return '/phase/' + this.get('id') + '/week/' + offset +'/';
   },
@@ -30,4 +31,5 @@ module.exports = Ractive.extend({
       return weeks;
     }
   }
+});
 });

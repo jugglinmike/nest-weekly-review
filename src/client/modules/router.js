@@ -1,5 +1,6 @@
+define(function(require, exports, module) {
 'use strict';
-var Router = require('ampersand-router');
+var Router = require('node_modules/ampersand-router/ampersand-router');
 var Phases = require('./phases');
 var Layout = require('./components/layout/index');
 var weekNumber = require('./util/week-num');
@@ -53,4 +54,5 @@ module.exports = Router.extend({
       });
     }.bind(this));
   }
+});
 });

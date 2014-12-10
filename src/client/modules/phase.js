@@ -1,5 +1,6 @@
+define(function(require, exports, module) {
 'use strict';
-var Model = require('ampersand-model');
+var Model = require('node_modules/ampersand-model/ampersand-model');
 
 var WEEK_MS = 1000 * 60 * 60 * 24 * 7;
 
@@ -32,4 +33,5 @@ module.exports = Model.extend({
 
     return attrs;
   }
+});
 });

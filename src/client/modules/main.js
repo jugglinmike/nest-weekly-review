@@ -1,3 +1,19 @@
+require.config({
+  paths: {
+    node_modules: '/node_modules'
+  }
+});
+define('ractive', ['node_modules/ractive/ractive'], function(Ractive) {
+  return {
+    load: function(name, parentRequire, onload) {
+      parentRequire(['text!' + name], function(text) {
+        onload(Ractive.parse(text));
+      });
+    }
+  };
+});
+
+define(function(require, exports, module) {
 'use strict';
 var Router = require('./router');
 
@@ -21,4 +37,5 @@ document.body.addEventListener('click', function(event) {
 
   event.preventDefault();
   router.navigate(href, { trigger: true });
+});
 });
