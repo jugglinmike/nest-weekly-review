@@ -1,24 +1,27 @@
 'use strict';
-var Router = require('./router');
+var Ractive = require('ractive');
 
-var router = new Router({ el: document.body });
-
-router.history.start({
-  pushState: true
-});
-
-// Because this application uses HTML5 pushstate, internal links are written
-// using root-relative paths. Click events on these links should be intercepted
-// and handled with the application router (this prevents a full page
-// redirect).
-document.body.addEventListener('click', function(event) {
-  var target = event.target;
-  var href = target.getAttribute('href');
-
-  if (!href || !/^\//.test(href)) {
-    return;
+var r = new Ractive({
+  template: '{{#each employees}}<x-employee />{{/each}}',
+  el: document.body,
+  components: {
+    'x-employee': Ractive.extend({
+      template:
+        //'{{utilizations}}' +
+        '{{ut}}',
+      computed: {
+        ut: function() {
+          // Somehow, accessing the `utilizations` property causes Ractive to
+          // re-compute this value. If the `utilizations` property is first
+          // referenced in the template itself, this recomputation does not
+          // take place.
+          //debugger;
+          var utilizations = this.get('utilizations');
+          window.console.log('computed property', utilizations);
+        }
+      }
+    })
   }
-
-  event.preventDefault();
-  router.navigate(href, { trigger: true });
 });
+
+r.set({ employees: [{ utilizations: [1, 2, 3] }] });
