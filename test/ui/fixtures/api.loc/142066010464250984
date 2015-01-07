@@ -1,0 +1,18 @@
+GET /project-phases?include=employees&after=2015-01-07&before=2015-02-11&include=reviews
+if-none-match: W/"9e4TyO7GX1vwZ1BcIWw6qg=="
+authorization: Bearer fake token value for testing
+accept-encoding: gzip, deflate
+accept-language: en-US,en;q=0.5
+accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+host: api.loc
+
+304 HTTP/1.1
+server: nginx/1.4.6 (Ubuntu)
+date: Wed, 07 Jan 2015 19:48:24 GMT
+connection: close
+x-powered-by: Express
+access-control-allow-origin: *
+vary: Origin
+etag: W/"9e4TyO7GX1vwZ1BcIWw6qg=="
+set-cookie: connect.sid=s%3AEzj5nmsxH9Dx97GHhXEvuCXM_6Y9axWQ.Zjl5T%2F7GbwRdP1IZMfF4Gs7M1Ec5KZaZZiNJFufuJaY; Path=/; HttpOnly
+
