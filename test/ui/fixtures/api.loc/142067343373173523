@@ -1,4 +1,4 @@
-OPTIONS /project-phases?include=employees&after=2015-01-07&before=2015-02-11&include=reviews
+OPTIONS /project-phases?include=employees&after=2015-01-25&before=2015-02-01&include=reviews
 accept-encoding: gzip, deflate
 accept-language: en-US,en;q=0.5
 accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
@@ -6,7 +6,7 @@ host: api.loc
 
 204 HTTP/1.1
 server: nginx/1.4.6 (Ubuntu)
-date: Wed, 07 Jan 2015 19:48:06 GMT
+date: Wed, 07 Jan 2015 23:30:33 GMT
 connection: close
 x-powered-by: Express
 access-control-allow-origin: *

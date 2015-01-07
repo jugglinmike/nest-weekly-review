@@ -1,4 +1,4 @@
-GET /project-phases?include=employees&after=2015-01-07&before=2015-02-11&include=reviews
+GET /project-phases?include=employees&after=2015-01-25&before=2015-02-01&include=reviews
 authorization: Bearer fake token value for testing
 accept-encoding: gzip, deflate
 accept-language: en-US,en;q=0.5
@@ -7,7 +7,7 @@ host: api.loc
 
 200 HTTP/1.1
 server: nginx/1.4.6 (Ubuntu)
-date: Wed, 07 Jan 2015 19:48:06 GMT
+date: Wed, 07 Jan 2015 23:30:33 GMT
 content-type: application/json; charset=utf-8
 content-length: 1343
 connection: close
@@ -15,7 +15,7 @@ x-powered-by: Express
 access-control-allow-origin: *
 vary: Origin
 etag: W/"9e4TyO7GX1vwZ1BcIWw6qg=="
-set-cookie: connect.sid=s%3AHwRIVRIC19pkREaETdnYc3QqOX5de63D.LWEaTVqp1FnWtIweNweknWRyDW81DLEVDJhQFWwRBhY; Path=/; HttpOnly
+set-cookie: connect.sid=s%3AMaTEPPgW7E6cWl8-vPFMb26bkcm3skyh.mLpfKmj9%2BXO7Gvu0igLLxWKKbMrRoroGNmxlKrK8Jtc; Path=/; HttpOnly
 
 {
   "linked": {

@@ -15,12 +15,29 @@ var Promise = require('bluebird');
  */
 var replay = require('replay');
 var httpProxy = require('http-proxy');
+var EventEmitter = require('events').EventEmitter;
 
+var readMethodsPattern = /GET|OPTIONS|HEAD/;
 replay.fixtures = __dirname + '/../fixtures';
+
+EventEmitter.call(exports);
+exports.on = EventEmitter.prototype.on;
+var emit = EventEmitter.prototype.emit.bind(exports);
+var listeners = EventEmitter.prototype.listeners.bind(exports);
+
+exports.removeAllListeners = EventEmitter.prototype.removeAllListeners;
 
 var proxy = httpProxy.createProxyServer({});
 var server = http.createServer(function(req, res) {
   var parts = url.parse(req.url);
+
+  if (!readMethodsPattern.test(req.method)) {
+    if (listeners(req.method).length === 0) {
+      throw new Error('Unhandled ' + req.method + ' request: ' + req.url);
+    }
+    emit(req.method, req, res);
+    return;
+  }
 
   delete parts.path;
   delete parts.pathname;
