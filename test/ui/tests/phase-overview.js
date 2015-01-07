@@ -23,6 +23,13 @@ describe('phase overview', function() {
         });
     });
 
+    it.only('simba', function() {
+      return driver.viewWeek(0, 3)
+        .then(function() {
+          return driver.editUtilization(0, 'tuesday');
+        });
+    });
+
     it('displays the current week according to the current system time', function() {
       var now = new Date();
       var lastSunday = new Date(now.getTime() - now.getDay() * ONE_DAY);
