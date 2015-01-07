@@ -4,11 +4,11 @@ var spawnNpmScript = require('./spawn-npm-script');
 
 var pollHttp = require('./poll-http');
 
-module.exports = function(applicationPort, mockApiPort) {
+module.exports = function(port, apiUrl) {
   var env = {
-    BP_API: 'http://localhost:' + mockApiPort,
+    BP_API: apiUrl,
     BP_BYPASS_AUTH: '1',
-    NODE_PORT: applicationPort,
+    NODE_PORT: port,
     PATH: process.env.PATH
   };
   var child = spawnNpmScript(
@@ -16,7 +16,7 @@ module.exports = function(applicationPort, mockApiPort) {
   );
   var kill = child.kill.bind(child, 'SIGTERM');
 
-  return pollHttp(applicationPort).then(function() {
+  return pollHttp(port).then(function() {
       return kill;
     }, function(err) {
       try {

@@ -6,16 +6,21 @@ var Command = require('leadfoot/Command');
 var chai = require('chai');
 
 var Driver = require('./driver');
-var API = require('../mock-api/api');
 var startSelenium = require('./util/start-selenium');
 var startApplication = require('./util/start-application');
+var apiSpy = require('./util/api-spy');
 var seleniumPort = 4444;
 var applicationPort = 8003;
-var apiPort = 4023;
-var quitSelenium, quitApplication, command, api;
+var apiUrl = 'http://api.loc';
+var proxyPort = 4023;
+var quitSelenium, quitApplication, command;
 
 global.assert = chai.assert;
 chai.use(require('chai-datetime'));
+
+before(function() {
+  return apiSpy.listen(proxyPort);
+});
 
 beforeEach(function() {
   var testCtx = this;
@@ -24,7 +29,7 @@ beforeEach(function() {
 
   return startSelenium(seleniumPort).then(function(quit) {
     quitSelenium = quit;
-    return startApplication(applicationPort, apiPort);
+    return startApplication(applicationPort, apiUrl);
   }).then(function(quit) {
     var server, capabilities;
 
@@ -32,7 +37,11 @@ beforeEach(function() {
 
     server = new Server('http://localhost:' + seleniumPort + '/wd/hub');
     capabilities = {
-      browserName: 'firefox'
+      browserName: 'firefox',
+      proxy: {
+        proxyType: 'manual',
+        httpProxy: 'localhost:' + proxyPort
+      }
     };
 
     return server.createSession(capabilities);
@@ -44,10 +53,6 @@ beforeEach(function() {
       command: command,
       root: 'http://localhost:' + applicationPort
     });
-
-    api = testCtx.api = new API();
-
-    return api.listen(apiPort);
   });
 });
 
@@ -64,10 +69,6 @@ afterEach(function() {
     }).then(function() {
       if (quitApplication) {
         return quitApplication();
-      }
-    }).then(function() {
-      if (api) {
-        return api.destroy();
       }
     });
 });
