@@ -1,0 +1,290 @@
+[
+  {
+    "id": 29,
+    "first": "Sue",
+    "last": "Lockwood",
+    "date_start": "2014-04-28T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "deathbearbrown",
+    "position_id": 1
+  },
+  {
+    "id": 4,
+    "first": "Tim",
+    "last": "Branyen",
+    "date_start": "2013-06-24T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "tbranyen",
+    "position_id": 1
+  },
+  {
+    "id": 2,
+    "first": "Rick",
+    "last": "Waldron",
+    "date_start": "2010-04-22T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "rwaldron",
+    "position_id": 1
+  },
+  {
+    "id": 23,
+    "first": "KAdam",
+    "last": "White",
+    "date_start": "2013-03-17T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "kadamwhite",
+    "position_id": 1
+  },
+  {
+    "id": 19,
+    "first": "Ashley",
+    "last": "Williams",
+    "date_start": "2014-03-17T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "ashleygwilliams",
+    "position_id": 2
+  },
+  {
+    "id": 21,
+    "first": "Jenn",
+    "last": "Schiffer",
+    "date_start": "2014-04-16T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "jennschiffer",
+    "position_id": 1
+  },
+  {
+    "id": 10,
+    "first": "Jory",
+    "last": "Burson",
+    "date_start": "2012-01-23T05:00:00.000Z",
+    "date_end": null,
+    "github_user": "jorydotcom",
+    "position_id": 6
+  },
+  {
+    "id": 11,
+    "first": "Isaac",
+    "last": "Durazo",
+    "date_start": "2012-08-12T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "isaacdurazo",
+    "position_id": 11
+  },
+  {
+    "id": 24,
+    "first": "Brendan",
+    "last": "McLoughlin",
+    "date_start": "2013-03-31T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "bmac",
+    "position_id": 1
+  },
+  {
+    "id": 1,
+    "first": "Boaz",
+    "last": "Sender",
+    "date_start": "2009-12-01T05:00:00.000Z",
+    "date_end": null,
+    "github_user": "boazsender",
+    "position_id": 5
+  },
+  {
+    "id": 5,
+    "first": "Adam",
+    "last": "Sontag",
+    "date_start": "2011-01-03T05:00:00.000Z",
+    "date_end": null,
+    "github_user": "ajpiano",
+    "position_id": 7
+  },
+  {
+    "id": 14,
+    "first": "Yannick",
+    "last": "Assogba",
+    "date_start": "2013-09-11T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "tafsiri",
+    "position_id": 1
+  },
+  {
+    "id": 22,
+    "first": "Corey",
+    "last": "Frang",
+    "date_start": "2013-03-31T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "gnarf",
+    "position_id": 1
+  },
+  {
+    "id": 17,
+    "first": "Z",
+    "last": "Goddard",
+    "date_start": "2014-02-03T05:00:00.000Z",
+    "date_end": null,
+    "github_user": "mzgoddard",
+    "position_id": 1
+  },
+  {
+    "id": 33,
+    "first": "Jasmin",
+    "last": "Jata",
+    "date_start": "2014-09-23T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "jasminruth",
+    "position_id": 12
+  },
+  {
+    "id": 34,
+    "first": "Layne",
+    "last": "Ainsworth",
+    "date_start": "2014-01-01T05:00:00.000Z",
+    "date_end": "2014-10-15T04:00:00.000Z",
+    "github_user": "lainsw",
+    "position_id": 1
+  },
+  {
+    "id": 13,
+    "first": "Eric",
+    "last": "O'Connor",
+    "date_start": "2013-06-10T04:00:00.000Z",
+    "date_end": "2014-10-10T04:00:00.000Z",
+    "github_user": "oconnore",
+    "position_id": 1
+  },
+  {
+    "id": 32,
+    "first": "Leo",
+    "last": "Balter",
+    "date_start": "2014-10-01T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "leobalter",
+    "position_id": 1
+  },
+  {
+    "id": 36,
+    "first": "Kassandra",
+    "last": "Perch",
+    "date_start": "2014-12-15T05:00:00.000Z",
+    "date_end": null,
+    "github_user": "nodebotanist",
+    "position_id": 2
+  },
+  {
+    "id": 35,
+    "first": "Brian",
+    "last": "Brennan",
+    "date_start": "2014-12-01T05:00:00.000Z",
+    "date_end": null,
+    "github_user": "brianloveswords",
+    "position_id": 1
+  },
+  {
+    "id": 6,
+    "first": "Mike",
+    "last": "Pennisi",
+    "date_start": "2011-05-16T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "jugglinmike",
+    "position_id": 1
+  },
+  {
+    "id": 20,
+    "first": "Matt",
+    "last": "Surabian",
+    "date_start": "2014-03-31T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "mattsurabian",
+    "position_id": 15
+  },
+  {
+    "id": 31,
+    "first": "Mat",
+    "last": "Marquis",
+    "date_start": "2014-08-13T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "wilto",
+    "position_id": 1
+  },
+  {
+    "id": 15,
+    "first": "Tyler",
+    "last": "Kellen",
+    "date_start": "2014-01-06T05:00:00.000Z",
+    "date_end": null,
+    "github_user": "tkellen",
+    "position_id": 16
+  },
+  {
+    "id": 8,
+    "first": "April",
+    "last": "Hart",
+    "date_start": "2011-07-27T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "aprilnicolehart",
+    "position_id": 8
+  },
+  {
+    "id": 16,
+    "first": "Claire",
+    "last": "Rittershaus",
+    "date_start": "2014-01-20T05:00:00.000Z",
+    "date_end": null,
+    "github_user": "clairerocks",
+    "position_id": 9
+  },
+  {
+    "id": 30,
+    "first": "Carl",
+    "last": "Danley",
+    "date_start": "2014-06-02T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "carldanley",
+    "position_id": 1
+  },
+  {
+    "id": 9,
+    "first": "Greg",
+    "last": "Smith",
+    "date_start": "2011-09-19T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "incompl",
+    "position_id": 17
+  },
+  {
+    "id": 26,
+    "first": "James",
+    "last": "Smith",
+    "date_start": "2014-04-20T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "jmeas",
+    "position_id": 2
+  },
+  {
+    "id": 7,
+    "first": "Irene",
+    "last": "Ros",
+    "date_start": "2011-07-11T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "iros",
+    "position_id": 2
+  },
+  {
+    "id": 12,
+    "first": "Bob",
+    "last": "Holt",
+    "date_start": "2013-06-03T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "bobholt",
+    "position_id": 1
+  },
+  {
+    "id": 3,
+    "first": "Ben",
+    "last": "Alman",
+    "date_start": "2010-09-05T04:00:00.000Z",
+    "date_end": null,
+    "github_user": "cowboy",
+    "position_id": 1
+  }
+]

@@ -7,6 +7,7 @@ var Promise = require('bluebird');
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+var cloneDeep = require('lodash.clonedeep');
 
 /**
  * api.set('projects', './fixture-data/projects.json');
@@ -23,11 +24,11 @@ function API() {
   var app = this._app = express();
 
   this._data = Object.create(null);
-  this._data.projects = [];
-  this._data.phases = [];
-  this._data.positions = [];
-  this._data.utilizations = [];
-  this._data.utilizationTypes = [];
+  this._data.projects = { byId: {}, all: [] };
+  this._data.phases = { byId: {}, all: [] };
+  this._data.positions = { byId: {}, all: [] };
+  this._data.utilizations = { byId: {}, all: [] };
+  this._data.utilizationTypes = { byId: {}, all: [] };
 
   app.use(cors());
   app.use(bodyParser.json());
@@ -70,6 +71,8 @@ API.prototype._loadJSON = function(filePath) {
 };
 
 API.prototype._set = function(identifier, representation) {
+  var all, byId;
+
   if (!(identifier in this._data)) {
     throw new Error(
       'Unrecognized resource identifier: "' + identifier + '". ' +
@@ -81,7 +84,11 @@ API.prototype._set = function(identifier, representation) {
     representation = this._loadJSON(__dirname + '/' + representation);
   }
 
-  this._data[identifier] = representation;
+  all = this._data[identifier].all = representation;
+  byId = this._data[identifier].byId = Object.create(null);
+  all.forEach(function(record) {
+    byId[record.id] = record;
+  });
 };
 
 API.prototype.destroy = function() {
@@ -103,40 +110,29 @@ API.prototype.destroy = function() {
 };
 
 API.prototype._getProjects = function(req, res) {
-  var data = this._data.projects;
+  var projects = this._data.projects;
   var id = parseInt(req.params.id, 10);
-  var found;
-
-  if (!('with_phases' in req.query)) {
-    data = data.map(function(phase) {
-      var copy = {};
-      var key;
-
-      for (key in phase) {
-        copy[key] = phase[key];
-      }
-      delete copy.phases;
-
-      return copy;
-    });
-  }
+  var include = req.query.include && req.query.include.split(',');
+  var payload = {};
 
   // This check will fail when `id` is NaN
   if (id === id) {
-    found = data.some(function(project) {
-      if (project.id === id) {
-        data = project;
-        return true;
-      }
-    });
+    payload.projects = projects.byId[id];
 
-    if (!found) {
+    if (!payload.projects) {
       res.sendStatus(404);
       return;
     }
+  } else {
+    payload.projects = projects.all;
   }
 
-  res.json(data);
+  if (include) {
+    payload.links = {};
+    payload.projects = cloneDeep(payload.projects);
+  }
+
+  res.json(payload);
 };
 
 API.prototype._getPositions = function(req, res) {
