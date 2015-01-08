@@ -46,12 +46,14 @@ Driver.prototype.get = function(path) {
       return this._$('session.loginButton');
     }.bind(this))
     .then(function(loginBtn) {
-      return loginBtn[0].click()
-        .then(navigate);
-    }.bind(this), function() {
       // If the login button is not present, the current session is already
       // authenticated and the operation is complete.
-    });
+      if (loginBtn.length === 0) {
+        return;
+      }
+      return loginBtn[0].click()
+        .then(navigate);
+    }.bind(this));
 };
 
 Driver.prototype.viewWeek = function(phaseNumber, weekNumber) {
@@ -85,8 +87,5 @@ Driver.prototype.editUtilization = function(employeeNumber, dayName) {
     }.bind(this))
     .then(function(set) {
       return set[offset].click();
-    })
-    .then(function() {
-      return require('bluebird').delay(2000);
     });
 };
