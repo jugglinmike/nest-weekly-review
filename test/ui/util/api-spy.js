@@ -127,6 +127,10 @@ exports.listen = function(port) {
   });
 };
 
+exports.close = function() {
+  return new Promise(server.close.bind(server));
+};
+
 if (require.main === module) {
   var port = process.env.NODE_PORT || 4023;
 
