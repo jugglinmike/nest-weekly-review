@@ -72,3 +72,7 @@ afterEach(function() {
       }
     });
 });
+
+after(function() {
+  return apiSpy.close();
+});
