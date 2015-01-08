@@ -47,11 +47,6 @@ beforeEach(function() {
     return server.createSession(capabilities);
   }).then(function(session) {
     var driver;
-    apiSpy.on('POST', function(req, res) {
-      console.log('POST!', req.url);
-      res.end();
-      apiSpy.removeAllListeners();
-    });
 
     command = new Command(session);
     driver = testCtx.driver = new Driver({

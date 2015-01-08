@@ -1,6 +1,8 @@
 'use strict';
 
 var ONE_DAY = 1000 * 60 * 60 * 24;
+var Promise = require('bluebird');
+var apiSpy = require('../util/api-spy');
 
 describe('phase overview', function() {
   var datePattern = /(\d+)\s*\/\s*(\d+)/;
@@ -24,9 +26,19 @@ describe('phase overview', function() {
     });
 
     it.only('simba', function() {
+      function handlePost(req, res) {
+        assert.equal(req.body.employee_id, 22);
+        assert.equal(req.body.utilization_type_id, 1);
+        res.end();
+      }
+
       return driver.viewWeek(0, 3)
         .then(function() {
-          return driver.editUtilization(0, 'tuesday');
+          return Promise.all([
+            apiSpy.handle('POST', '/utilizations', handlePost),
+            apiSpy.handle('POST', '/utilizations', handlePost),
+            driver.editUtilization(0, 'tuesday')
+          ]);
         });
     });
 
