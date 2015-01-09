@@ -8,6 +8,10 @@ describe('phase overview', function() {
   var datePattern = /(\d+)\s*\/\s*(\d+)/;
   var driver;
 
+  function handleOptions(req, res) {
+    res.end();
+  }
+
   beforeEach(function() {
     driver = this.driver;
   });
@@ -15,7 +19,31 @@ describe('phase overview', function() {
   describe('index page', function() {
     beforeEach(function() {
       this.timeout(9000);
-      return driver.get('/');
+      function handlePhaseRequest(req, res) {
+        var today = new Date();
+        var prevSunday = new Date(
+          today.getTime() - 1000 * 60 * 60 * 24 * today.getDay()
+        );
+        var fiveWeeks = new Date(
+          prevSunday.getTime() + 1000 * 60 * 60 * 24 * 7 * 5
+        );
+        assert.equal(req.query.after, prevSunday.toISOString().replace(/T.*/, ''));
+        assert.equal(req.query.before, fiveWeeks.toISOString().replace(/T.*/, ''));
+        res.end(
+          JSON.stringify({ linked: { employees: [] }, project_phases: [] })
+        );
+      }
+      return Promise.all([
+        apiSpy.handle('OPTIONS', /.*/, handleOptions),
+        apiSpy.handle('OPTIONS', /.*/, handleOptions),
+        apiSpy.handle('OPTIONS', /.*/, handleOptions),
+        apiSpy.handle('OPTIONS', /.*/, handleOptions),
+        apiSpy.handle('OPTIONS', /.*/, handleOptions),
+        apiSpy.handle('OPTIONS', /.*/, handleOptions),
+        apiSpy.handle('GET', '/project-phases', handlePhaseRequest),
+        apiSpy.handle('GET', '/project-phases', handlePhaseRequest),
+        driver.get('/')
+      ]);
     });
 
     it('renders the application title', function() {
@@ -25,7 +53,7 @@ describe('phase overview', function() {
         });
     });
 
-    it.only('simba', function() {
+    it('simba', function() {
       function handlePost(req, res) {
         assert.equal(req.body.employee_id, 22);
         assert.equal(req.body.utilization_type_id, 1);

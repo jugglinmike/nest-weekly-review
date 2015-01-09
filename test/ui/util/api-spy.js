@@ -17,10 +17,11 @@ var replay = require('replay');
 var httpProxy = require('http-proxy');
 var pathToRegExp = require('path-to-regexp');
 
-var proxy = httpProxy.createProxyServer({});
-var readMethodsPattern = /GET|OPTIONS|HEAD/;
+var proxyServer = httpProxy.createProxyServer({});
 var jsonMimePattern = /application\/json/;
-var reqHandlers = { POST: [], PUT: [], PATCH: [], DELETE: [] };
+var reqHandlers = {
+  POST: [], PUT: [], PATCH: [], DELETE: [], OPTIONS: [], GET: []
+};
 var fixtureDir = __dirname + '/../fixtures';
 
 replay.fixtures = fixtureDir;
@@ -34,7 +35,13 @@ function parseRequest(req) {
 
   return new Promise(function(resolve, reject) {
     req.on('end', function() {
+      var parts = url.parse(req.url, true);
       req.body = body;
+      req.host = parts.host;
+      req.hostname = parts.hostname;
+      req.port = parts.port;
+      req.protocol = parts.protocol;
+      req.query = parts.query;
 
       if (jsonMimePattern.test(req.headers['content-type'])) {
         try {
@@ -50,36 +57,52 @@ function parseRequest(req) {
   });
 }
 
-function trigger(req, res) {
+function prepResponse(req, res) {
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Headers', 'authorization');
+    res.setHeader(
+      'Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE'
+    );
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+
+  res.setHeader('Vary', 'Origin');
+}
+
+function handle(req, res) {
   var handlers = reqHandlers[req.method];
-  var path = url.parse(req.url).path;
+  var pathName = url.parse(req.url).pathname;
 
   var found = handlers.some(function(handler, idx) {
-    if (!handler.pattern.test(path)) {
+    if (!handler.pattern.test(pathName)) {
       return false;
     }
 
     parseRequest(req).then(function() {
+      var next = function() {
+        proxy(req, res);
+      };
+
+      prepResponse(req, res);
+
       res.on('finish', handler.resolve);
       handlers.splice(idx, 1);
-      handler.handler.call(null, req, res);
+
+      try {
+        handler.handler.call(null, req, res, next);
+      } catch (err) {
+        handler.reject(err);
+      }
     }, handler.reject);
 
     return true;
   });
 
-  if (!found) {
-    throw new Error('Unhandled request: ' + req.method + ' ' + req.url);
-  }
+  return found;
 }
 
-var server = http.createServer(function(req, res) {
+var proxy = function(req, res) {
   var parts = url.parse(req.url);
-
-  if (!readMethodsPattern.test(req.method)) {
-    trigger(req, res);
-    return;
-  }
 
   delete parts.path;
   delete parts.pathname;
@@ -92,8 +115,20 @@ var server = http.createServer(function(req, res) {
     req.headers['content-length'] = '0';
   }
 
-  proxy.web(req, res, { target: url.format(parts) });
+  proxyServer.web(req, res, { target: url.format(parts) });
+};
+
+var server = http.createServer(function(req, res) {
+  if (handle(req, res)) {
+    return;
+  }
+
+  proxy(req, res);
 });
+
+exports.allow = function(host) {
+  replay.allow(host);
+};
 
 exports.handle = function(method, route, handler) {
   var METHOD = method.toUpperCase();
@@ -101,6 +136,7 @@ exports.handle = function(method, route, handler) {
   if (!reqHandlers.hasOwnProperty(METHOD)) {
     throw new Error('Unrecognized request method: "' + method + '".');
   }
+
   handler = {
     pattern: pathToRegExp(route),
     handler: handler
