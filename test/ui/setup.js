@@ -19,50 +19,53 @@ global.assert = chai.assert;
 chai.use(require('chai-datetime'));
 
 before(function() {
-  return apiSpy.listen(proxyPort);
+  this.timeout(10 * 1000);
+  apiSpy.allow('ocsp.digicert.com');
+
+  return apiSpy.listen(proxyPort)
+    .then(function() {
+      return startApplication(applicationPort, apiUrl);
+    }).then(function(quit) {
+      quitApplication = quit;
+      return startSelenium(seleniumPort);
+    }).then(function(quit) {
+      quitSelenium = quit;
+    });
 });
 
 beforeEach(function() {
-  var testCtx = this;
+  var server, capabilities;
 
   this.timeout(10 * 1000);
 
-  return startSelenium(seleniumPort).then(function(quit) {
-    quitSelenium = quit;
-    return startApplication(applicationPort, apiUrl);
-  }).then(function(quit) {
-    var server, capabilities;
+  server = new Server('http://localhost:' + seleniumPort + '/wd/hub');
+  capabilities = {
+    browserName: 'firefox',
+    proxy: {
+      proxyType: 'manual',
+      httpProxy: 'localhost:' + proxyPort
+    }
+  };
 
-    quitApplication = quit;
-
-    server = new Server('http://localhost:' + seleniumPort + '/wd/hub');
-    capabilities = {
-      browserName: 'firefox',
-      proxy: {
-        proxyType: 'manual',
-        httpProxy: 'localhost:' + proxyPort
-      }
-    };
-
-    return server.createSession(capabilities);
-  }).then(function(session) {
-    var driver;
-
+  return server.createSession(capabilities).then(function(session) {
     command = new Command(session);
-    driver = testCtx.driver = new Driver({
+
+    this.driver = new Driver({
       command: command,
       root: 'http://localhost:' + applicationPort
     });
-  });
+  }.bind(this));
 });
 
 afterEach(function() {
+  if (command) {
+    return command.quit();
+  }
+});
+
+after(function() {
   return Promise.resolve()
     .then(function() {
-      if (command) {
-        return command.quit();
-      }
-    }).then(function() {
       if (quitSelenium) {
         return quitSelenium();
       }
@@ -70,9 +73,7 @@ afterEach(function() {
       if (quitApplication) {
         return quitApplication();
       }
+    }).then(function() {
+      return apiSpy.close();
     });
-});
-
-after(function() {
-  return apiSpy.close();
 });
