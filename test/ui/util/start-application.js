@@ -1,8 +1,9 @@
 'use strict';
 
-var spawnNpmScript = require('./spawn-npm-script');
+var Promise = require('bluebird');
 
-var pollHttp = require('./poll-http');
+var spawnNpmScript = require('./spawn-npm-script');
+var portGuard = require('./port-guard');
 
 module.exports = function(port, apiUrl) {
   var env = {
@@ -11,18 +12,19 @@ module.exports = function(port, apiUrl) {
     NODE_PORT: port,
     PATH: process.env.PATH
   };
-  var child = spawnNpmScript(
-    '../../../package.json', 'start-dev', { env: env }
-  );
-  var kill = child.kill.bind(child, 'SIGTERM');
+  return portGuard(port, function() {
+      var child = spawnNpmScript(
+        '../../../package.json', 'start-dev', { env: env }
+      );
+      var kill = function() {
+        child.kill();
 
-  return pollHttp(port).then(function() {
+        return new Promise(function(resolve, reject) {
+          child.once('exit', resolve);
+          child.once('error', reject);
+        });
+      };
+
       return kill;
-    }, function(err) {
-      try {
-        kill();
-      } catch(err) {}
-
-      throw err;
     });
 };
