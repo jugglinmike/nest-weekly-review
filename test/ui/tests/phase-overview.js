@@ -8,9 +8,9 @@ describe('phase overview', function() {
   var datePattern = /(\d+)\s*\/\s*(\d+)/;
   var driver;
 
-  function handleOptions(req, res) {
-    res.end();
-  }
+  before(function() {
+    apiSpy.on('OPTIONS', /.*/, function(req, res) { res.end(); });
+  });
 
   beforeEach(function() {
     driver = this.driver;
@@ -34,14 +34,8 @@ describe('phase overview', function() {
         );
       }
       return Promise.all([
-        apiSpy.handle('OPTIONS', /.*/, handleOptions),
-        apiSpy.handle('OPTIONS', /.*/, handleOptions),
-        apiSpy.handle('OPTIONS', /.*/, handleOptions),
-        apiSpy.handle('OPTIONS', /.*/, handleOptions),
-        apiSpy.handle('OPTIONS', /.*/, handleOptions),
-        apiSpy.handle('OPTIONS', /.*/, handleOptions),
-        apiSpy.handle('GET', '/project-phases', handlePhaseRequest),
-        apiSpy.handle('GET', '/project-phases', handlePhaseRequest),
+        apiSpy.once('GET', '/project-phases', handlePhaseRequest),
+        apiSpy.once('GET', '/project-phases', handlePhaseRequest),
         driver.get('/')
       ]);
     });
@@ -63,8 +57,8 @@ describe('phase overview', function() {
       return driver.viewWeek(0, 3)
         .then(function() {
           return Promise.all([
-            apiSpy.handle('POST', '/utilizations', handlePost),
-            apiSpy.handle('POST', '/utilizations', handlePost),
+            apiSpy.once('POST', '/utilizations', handlePost),
+            apiSpy.once('POST', '/utilizations', handlePost),
             driver.editUtilization(0, 'tuesday')
           ]);
         });
