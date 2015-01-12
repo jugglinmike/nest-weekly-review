@@ -73,32 +73,36 @@ function handle(req, res) {
   var handlers = reqHandlers[req.method];
   var pathName = url.parse(req.url).pathname;
 
-  var found = handlers.some(function(handler, idx) {
+  return handlers.reduce(function(prev, handler) {
     if (!handler.pattern.test(pathName)) {
-      return false;
+      return prev;
     }
 
-    parseRequest(req).then(function() {
-      var next = function() {
-        proxy(req, res);
-      };
+    return prev.then(function() {
+        return parseRequest(req);
+      }).then(function() {
+        var next, finish;
+        var whenNext = new Promise(function(resolve, reject) {
+          next = resolve;
+          finish = reject;
+        });
 
-      prepResponse(req, res);
+        prepResponse(req, res);
 
-      res.on('finish', handler.resolve);
-      handlers.splice(idx, 1);
+        res.on('finish', finish);
+        if (handler.once) {
+          handlers.splice(handlers.indexOf(handler), 1);
+        }
 
-      try {
-        handler.handler.call(null, req, res, next);
-      } catch (err) {
-        handler.reject(err);
-      }
-    }, handler.reject);
+        try {
+          handler.handler.call(null, req, res, next);
+        } catch (err) {
+          handler.reject(err);
+        }
 
-    return true;
-  });
-
-  return found;
+        return whenNext;
+      }, handler.reject);
+  }, Promise.resolve());
 }
 
 var proxy = function(req, res) {
@@ -119,34 +123,55 @@ var proxy = function(req, res) {
 };
 
 var server = http.createServer(function(req, res) {
-  if (handle(req, res)) {
-    return;
-  }
-
-  proxy(req, res);
+  handle(req, res).then(function() {
+      proxy(req, res);
+    }, function() {
+      console.log('not okay');
+    });
 });
 
 exports.allow = function(host) {
   replay.allow(host);
 };
 
-exports.handle = function(method, route, handler) {
-  var METHOD = method.toUpperCase();
+exports._bind = function(options) {
+  var METHOD = options.method.toUpperCase();
+  var handler;
 
   if (!reqHandlers.hasOwnProperty(METHOD)) {
-    throw new Error('Unrecognized request method: "' + method + '".');
+    throw new Error('Unrecognized request method: "' + options.method + '".');
   }
 
   handler = {
-    pattern: pathToRegExp(route),
-    handler: handler
+    once: options.once,
+    pattern: pathToRegExp(options.route),
+    handler: options.handler
   };
 
   reqHandlers[METHOD].push(handler);
 
-  return new Promise(function(resolve, reject) {
+  handler.promise = new Promise(function(resolve, reject) {
     handler.resolve = resolve;
     handler.reject = reject;
+  });
+
+  return handler.promise;
+};
+
+exports.on = function(method, route, handler) {
+  return exports._bind({
+    method: method,
+    route: route,
+    handler: handler
+  });
+};
+
+exports.once = function(method, route, handler) {
+  return exports._bind({
+    once: true,
+    method: method,
+    route: route,
+    handler: handler
   });
 };
 
