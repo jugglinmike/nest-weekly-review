@@ -4,25 +4,33 @@ var Promise = require('bluebird');
 var Server = require('leadfoot/Server');
 var Command = require('leadfoot/Command');
 var chai = require('chai');
+/**
+ * The `replay` module will intercept requests to external URLs and substitute
+ * cached responses.
+ * https://github.com/assaf/node-replay
+ */
+var replay = require('replay');
 
 var Driver = require('./driver');
 var startSelenium = require('./util/start-selenium');
 var startApplication = require('./util/start-application');
-var apiSpy = require('./util/api-spy');
+var MiddleMan = require('./util/middle-man');
+
 var seleniumPort = 4444;
 var applicationPort = 8003;
 var apiUrl = 'http://api.loc';
 var proxyPort = 4023;
-var quitSelenium, quitApplication, command;
+var middleMan, quitSelenium, quitApplication, command;
 
 global.assert = chai.assert;
 chai.use(require('chai-datetime'));
 
 before(function() {
+  middleMan = this.middleMan = new MiddleMan();
   this.timeout(10 * 1000);
-  apiSpy.allow('ocsp.digicert.com');
+  replay.allow('ocsp.digicert.com');
 
-  return apiSpy.listen(proxyPort)
+  return middleMan.listen(proxyPort)
     .then(function() {
       return startApplication(applicationPort, apiUrl);
     }).then(function(quit) {
@@ -74,6 +82,6 @@ after(function() {
         return quitApplication();
       }
     }).then(function() {
-      return apiSpy.close();
+      return middleMan.close();
     });
 });

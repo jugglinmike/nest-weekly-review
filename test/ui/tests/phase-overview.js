@@ -2,14 +2,14 @@
 
 var ONE_DAY = 1000 * 60 * 60 * 24;
 var Promise = require('bluebird');
-var apiSpy = require('../util/api-spy');
 
 describe('phase overview', function() {
   var datePattern = /(\d+)\s*\/\s*(\d+)/;
-  var driver;
+  var driver, middleMan;
 
   before(function() {
-    apiSpy.on('OPTIONS', /.*/, function(req, res) { res.end(); });
+    middleMan = this.middleMan;
+    middleMan.on('OPTIONS', /.*/, function(req, res) { res.end(); });
   });
 
   beforeEach(function() {
@@ -34,8 +34,8 @@ describe('phase overview', function() {
         );
       }
       return Promise.all([
-        apiSpy.once('GET', '/project-phases', handlePhaseRequest),
-        apiSpy.once('GET', '/project-phases', handlePhaseRequest),
+        middleMan.once('GET', '/project-phases', handlePhaseRequest),
+        middleMan.once('GET', '/project-phases', handlePhaseRequest),
         driver.get('/')
       ]);
     });
@@ -57,8 +57,8 @@ describe('phase overview', function() {
       return driver.viewWeek(0, 3)
         .then(function() {
           return Promise.all([
-            apiSpy.once('POST', '/utilizations', handlePost),
-            apiSpy.once('POST', '/utilizations', handlePost),
+            middleMan.once('POST', '/utilizations', handlePost),
+            middleMan.once('POST', '/utilizations', handlePost),
             driver.editUtilization(0, 'tuesday')
           ]);
         });
