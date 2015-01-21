@@ -21,14 +21,16 @@ describe('phase overview', function() {
       this.timeout(9000);
       function handlePhaseRequest(req, res) {
         var today = new Date();
-        var prevSunday = new Date(
-          today.getTime() - 1000 * 60 * 60 * 24 * today.getDay()
+        var prevSunday = new Date(today.getTime() - ONE_DAY * today.getDay());
+        var fiveWeeks = new Date(prevSunday.getTime() + ONE_DAY * 7 * 5);
+
+        assert.equal(
+          req.query.after, prevSunday.toISOString().replace(/T.*/, '')
         );
-        var fiveWeeks = new Date(
-          prevSunday.getTime() + 1000 * 60 * 60 * 24 * 7 * 5
+        assert.equal(
+          req.query.before, fiveWeeks.toISOString().replace(/T.*/, '')
         );
-        assert.equal(req.query.after, prevSunday.toISOString().replace(/T.*/, ''));
-        assert.equal(req.query.before, fiveWeeks.toISOString().replace(/T.*/, ''));
+
         res.end(
           JSON.stringify({ linked: { employees: [] }, project_phases: [] })
         );
