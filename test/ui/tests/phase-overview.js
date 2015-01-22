@@ -83,7 +83,7 @@ describe('phase overview', function() {
   describe('specific phase', function() {
     beforeEach(function() {
       this.timeout(9000);
-      return driver.get('/year/2014/week/50/');
+      return driver.get('/date/2014-12-21/');
     });
 
     it('displays the correct weeks for a given URL', function() {
