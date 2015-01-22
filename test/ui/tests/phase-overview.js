@@ -9,7 +9,6 @@ describe('phase overview', function() {
 
   before(function() {
     middleMan = this.middleMan;
-    middleMan.on('OPTIONS', /.*/, function(req, res) { res.end(); });
   });
 
   beforeEach(function() {
