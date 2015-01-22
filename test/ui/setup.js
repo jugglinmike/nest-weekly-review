@@ -26,7 +26,10 @@ global.assert = chai.assert;
 chai.use(require('chai-datetime'));
 
 function handleCors(req, res) {
-  res.setHeader('Access-Control-Allow-Headers', 'authorization');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'authorization, authorization, content-type'
+  );
   res.setHeader(
     'Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE'
   );
