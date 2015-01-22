@@ -1,4 +1,5 @@
 'use strict';
+var Promise = require('bluebird');
 
 var selectors = require('./selectors.json');
 var lookup = require('./util/lookup');
@@ -21,13 +22,30 @@ Driver.prototype._selectOption = function(element, value) {
   return element.findAllByTagName('option')
     .then(function(options) {
       optionEls = options;
-      return require('bluebird').all(options.map(function(o) { return o.getVisibleText(); }));
+      return Promise.all(options.map(function(option) {
+        return option.getVisibleText();
+      }));
     })
     .then(function(text) {
       var index = text.indexOf(value);
 
+      if (index === -1) {
+        throw new Error('Could not find option value "' + value + '".');
+      }
+
       return this._cmd.execute(function(el) {
+        /* jshint browser: true */
+        var evt;
+
         el.selected = true;
+
+        if ('createEvent' in document) {
+          evt = document.createEvent('HTMLEvents');
+          evt.initEvent('change', false, true);
+          el.parentNode.dispatchEvent(evt);
+        } else {
+          element.fireEvent('onchange');
+        }
       }, [optionEls[index]]);
     }.bind(this));
 };
@@ -60,27 +78,71 @@ Driver.prototype.viewWeek = function(phaseNumber, weekNumber) {
   return this._$('index.phaseWeekLink')
     .then(function(weekLinks) {
       return weekLinks[phaseNumber * 5 + weekNumber].click();
+    }).then(function() {
+      return this._waitFor('phaseWeek.employee');
+    }.bind(this));
+};
+
+Driver.prototype.readEmployees = function() {
+  return this._$('phaseWeek.employee')
+    .then(function(employees) {
+      return Promise.all(employees.map(function(employee) {
+        return employee.getVisibleText();
+      }));
     });
 };
 
-Driver.prototype.editUtilization = function(employeeNumber, dayName) {
-  var dayNumber = dayNames.indexOf(dayName);
+Driver.prototype._waitFor = function(region, timeout) {
+  var start = new Date().getTime();
+  if (arguments.length < 2) {
+    timeout = 1000;
+  }
+
+  var poll = function() {
+    return this._$(region)
+      .then(function(els) {
+        if (els.length) {
+          return;
+        }
+
+        if (new Date().getTime() - start > timeout) {
+          throw new Error('Unable to find element at region "' + region + '"');
+        }
+
+        return poll();
+      });
+  }.bind(this);
+
+  return poll();
+};
+
+Driver.prototype.editUtilization = function(options) {
+  var dayNumber = dayNames.indexOf(options.day);
   var offset;
 
   if (!dayNumber) {
-    throw new Error('Unrecognized day: "' + dayName + '".');
+    throw new Error('Unrecognized day: "' + options.day + '".');
   }
 
-  offset = employeeNumber * 5 + dayNumber;
+  return this.readEmployees()
+    .then(function(names) {
+      var employeeOffset = names.indexOf(options.name);
 
-  return this._$('phaseWeek.day')
+      if (employeeOffset === -1) {
+        throw new Error('Expected employee not found: "' + options.name + '"');
+      }
+
+      offset = employeeOffset * 5 + dayNumber;
+
+      return this._$('phaseWeek.day');
+    }.bind(this))
     .then(function(days) {
       return days[offset].click();
     })
     .then(function() {
       return this._$('phaseWeek.typeInput');
     }.bind(this)).then(function(typeInputs) {
-      return this._selectOption(typeInputs[offset], 'Sick Time');
+      return this._selectOption(typeInputs[offset], options.type);
     }.bind(this))
     .then(function() {
       return this._$('phaseWeek.set');
