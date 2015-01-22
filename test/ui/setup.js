@@ -25,7 +25,12 @@ var middleMan, quitSelenium, quitApplication, command;
 global.assert = chai.assert;
 chai.use(require('chai-datetime'));
 
-function handleCors(req, res) {
+function handleCors(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+}
+
+function handleCorsPreflight(req, res) {
   res.setHeader(
     'Access-Control-Allow-Headers',
     'authorization, authorization, content-type'
@@ -59,7 +64,8 @@ before(function() {
 beforeEach(function() {
   var server, capabilities;
 
-  this.middleMan.on('OPTIONS', /.*/, handleCors);
+  this.middleMan.on('*', /.*/, handleCors);
+  this.middleMan.on('OPTIONS', /.*/, handleCorsPreflight);
   this.timeout(10 * 1000);
 
   server = new Server('http://localhost:' + seleniumPort + '/wd/hub');
