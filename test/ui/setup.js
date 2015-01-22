@@ -85,3 +85,16 @@ after(function() {
       return middleMan.close();
     });
 });
+
+/**
+ * Forcibly abort any child processes in case of abupt program termination
+ * (e.g.  a SIGTERM event issued by the user).
+ */
+process.on('exit', function() {
+  try {
+    quitSelenium();
+  } catch(err) {}
+  try {
+    quitApplication();
+  } catch(err) {}
+});
