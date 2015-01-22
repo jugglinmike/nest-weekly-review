@@ -66,8 +66,13 @@ beforeEach(function() {
 });
 
 afterEach(function() {
+  var whenQuit;
+  this.middleMan.off();
+
   if (command) {
-    return command.quit();
+    whenQuit = command.quit();
+    command = null;
+    return whenQuit;
   }
 });
 
