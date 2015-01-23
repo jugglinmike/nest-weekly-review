@@ -16,22 +16,14 @@ describe('phase overview', function() {
   });
 
   describe('index page', function() {
+    var query;
+
     beforeEach(function() {
       this.timeout(9000);
       function handlePhaseRequest(req, res) {
-        var today = new Date();
-        var prevSunday = new Date(today.getTime() - ONE_DAY * today.getDay());
-        var fiveWeeks = new Date(prevSunday.getTime() + ONE_DAY * 7 * 5);
-
-        assert.equal(
-          req.query.after, prevSunday.toISOString().replace(/T.*/, '')
-        );
-        assert.equal(
-          req.query.before, fiveWeeks.toISOString().replace(/T.*/, '')
-        );
-
+        query = req.query;
         res.end(
-          JSON.stringify({ linked: { employees: [] }, project_phases: [] })
+          JSON.stringify({})
         );
       }
       return Promise.all([
@@ -42,6 +34,17 @@ describe('phase overview', function() {
     });
 
     it('displays the current week according to the local system time', function() {
+      var today = new Date();
+      var prevSunday = new Date(today.getTime() - ONE_DAY * today.getDay());
+      var fiveWeeks = new Date(prevSunday.getTime() + ONE_DAY * 7 * 5);
+
+      assert.equal(
+        query.after, prevSunday.toISOString().replace(/T.*/, '')
+      );
+      assert.equal(
+        query.before, fiveWeeks.toISOString().replace(/T.*/, '')
+      );
+
       return driver.read('index.title')
         .then(function(text) {
           assert.equal(text, 'Weekly Review', 'Application title visible');
@@ -61,43 +64,14 @@ describe('phase overview', function() {
     });
   });
 
-  describe('specific phase', function() {
+  describe('specific date', function() {
     beforeEach(function() {
-      this.timeout(9000);
+      this.timeout(5000);
+
       return driver.get('/date/2014-12-21/');
     });
 
-    it('correctly edits an existing single-day utilization', function() {
-      function handleDelete(req, res) {
-        var id = parseInt(req.params.id, 10);
-        assert.equal(id, 5);
-        res.end(JSON.stringify({ id: id }));
-      }
-      function handlePost(req, res) {
-        res.end(JSON.stringify({ id: 6 }));
-      }
-      function handlePut(req, res) {
-        res.end();
-      }
-
-      return driver.viewWeek(0, 3)
-        .then(function() {
-          return Promise.all([
-            middleMan.once('DELETE', '/utilizations/:id', handleDelete),
-            middleMan.once('POST', '/utilizations', handlePost),
-            // TODO: No PUT requests should be issued in this case. Fix the bug
-            // and remove this.
-            middleMan.once('PUT', '/utilizations/:id', handlePut),
-            driver.editUtilization({
-              name: 'Jerry Seinfeld',
-              day: 'thursday',
-              type: 'Education'
-            })
-          ]);
-        });
-    });
-
-    it('displays the correct weeks for a given URL', function() {
+    it('displays the active phases at the given date', function() {
       return driver.read('index.weekLabels')
         .then(function(labels) {
           var match;
