@@ -98,23 +98,8 @@ beforeEach(function() {
     }.bind(this));
 });
 
-afterEach(function() {
-  if (command) {
-    return command.quit().then(function() {
-      command = null;
-    });
-  }
-});
-
-/**
- * Unbind event handlers *after* Selenium session is closed because the browser
- * may still be issuing requests after the test completes.
- */
-afterEach(function() {
-  this.middleMan.off();
-});
-
 after(function() {
+  DEBUG('after');
   return Promise.resolve()
     .then(function() {
       if (quitSelenium) {

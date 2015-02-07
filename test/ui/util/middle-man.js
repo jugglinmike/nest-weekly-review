@@ -47,6 +47,9 @@ MiddleMan.prototype.close = function() {
 MiddleMan.prototype._onRequest = function(req, res) {
   this._handle(req, res)
     .then(function() {
+        if (req.method === 'PUT') {
+          DEBUG('foobar', req.url);
+        }
         this._proxy(req, res);
       }.bind(this), function() {});
 };

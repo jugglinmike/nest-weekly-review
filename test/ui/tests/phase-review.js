@@ -27,10 +27,6 @@ describe('phase review', function() {
 
     it.only('correctly submits a review', function() {
       this.timeout(80 * 1000);
-      middleMan.on('POST', '/project-phase-reviews', function(req, res) {
-          DEBUG('POST');
-          res.end();
-        });
       middleMan.on('PUT', '/utilizations/2', function(req, res) {
           DEBUG('PUT');
           res.end();
@@ -46,8 +42,8 @@ describe('phase review', function() {
 
 global.DEBUG = (function() {
   var msgs = [];
-  return function(msg) {
-    msgs.push(msg);
+  return function() {
+    msgs.push(Array.prototype.slice.call(arguments));
     console.log(msgs);
   };
 }());
