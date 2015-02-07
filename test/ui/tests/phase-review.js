@@ -126,25 +126,51 @@ describe('phase review', function() {
       return driver.viewWeek(0, 2);
     });
 
-    it('correctly submits a review', function() {
-      this.timeout(8000);
+    afterEach(function() {
+      DEBUG('afterEach 1');
+    });
 
-      return driver.addNote('Everyone did a nice job')
+    it.only('correctly submits a review', function() {
+      this.timeout(80 * 1000);
+
+      DEBUG('Doing foo');
+
+      var foo = driver.addNote('Everyone did a nice job')
         .then(function() {
           return driver.verify(['Jerry Seinfeld']);
         }).then(function() {
-          function handleRequest(req, res) {
+          function handleRequestFOO(req, res) {
+            res.end();
+          }
+          function handleRequestBAR(req, res) {
             res.end();
           }
 
-          return Promise.all([
-            middleMan.once('POST', '/project-phase-reviews', handleRequest),
-            middleMan.once('PUT', '/utilizations/2', handleRequest),
-            middleMan.once('POST', '/utilizations', handleRequest),
-            middleMan.once('POST', '/utilizations', handleRequest),
-            driver.submitReview()
-          ]);
+          middleMan.on('POST', '/project-phase-reviews', handleRequestFOO);
+          middleMan.on('PUT', '/utilizations/2', handleRequestBAR);
+
+          return driver.submitReview();
         });
+
+      foo.then(function() {
+        DEBUG('foo success');
+      }, function(err) {
+        DEBUG('foo failure', err.message);
+        throw err;
+      });
+
+      //return foo;
+      return new Promise(function(resolve, reject) {
+        foo.then(resolve, reject);
+      });
     });
   });
 });
+
+global.DEBUG = (function() {
+  var msgs = [];
+  return function(msg) {
+    msgs.push(msg);
+    console.log(msgs);
+  };
+}());
