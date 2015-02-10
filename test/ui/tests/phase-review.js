@@ -119,6 +119,45 @@ describe('phase review', function() {
           ]);
         });
     });
+
+    it('correctly updates upon navigation after submitting a review', function() {
+      this.timeout(8000);
+
+      return driver.verify(['Jerry Seinfeld', 'Cosmo Kramer'])
+        .then(function() {
+          function handleRequest(req, res) {
+            res.end();
+          }
+          function handleReviewSubmission(req, res) {
+            res.end(JSON.stringify({ 'project-phase-reviews': { id: 200032 } }));
+          }
+
+          return Promise.all([
+            middleMan.once('POST', '/project-phase-reviews', handleReviewSubmission),
+            middleMan.once('PUT', '/utilizations/6', handleRequest),
+            middleMan.once('PUT', '/utilizations/7', handleRequest),
+            middleMan.once('POST', '/utilizations', handleRequest),
+            driver.submitReview()
+          ]);
+        })
+        .then(function() {
+          return driver.count('phaseWeek.verified');
+        }).then(function(count) {
+          assert.equal(
+            count,
+            2,
+            'Verification information reflects recently-completed operations'
+          );
+
+          return driver.cycleReview('next');
+        }).then(function() {
+          return driver.count('phaseWeek.verified');
+        }).then(function(count) {
+          assert.equal(
+            count, 0, 'Verification information is refreshed after navigation'
+          );
+        });
+    });
   });
 
   describe('review with utilizations that require "trimming"', function() {
