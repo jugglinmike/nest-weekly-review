@@ -27,7 +27,8 @@ module.exports = Component.extend({
       employee_id: this.get('employee.id'),
       project_id: projectRequired ? this.get('newProject.id') : 1,
       project_phase_id: projectRequired ? this.get('newPhase.id') : null,
-      project: projectRequired ? this.get('newProject') : null
+      project: projectRequired ? this.get('newProject') : null,
+      billable: this.get('_billable')
     };
   },
 
@@ -155,6 +156,18 @@ module.exports = Component.extend({
         }
 
         return newPhase;
+      }
+    },
+
+    newBillable: {
+      set: function(val) {
+        this.set('_newBillable', val);
+      },
+      get: function() {
+        var newBillable = this.get('_newBillable');
+        var billable = this.get('utilization.billable');
+
+        return typeof billable === 'boolean' ? billable : newBillable;
       }
     },
 

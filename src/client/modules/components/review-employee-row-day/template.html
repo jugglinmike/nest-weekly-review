@@ -27,6 +27,9 @@
       <span class="utilization-project">{{ newProject.name }}</span>
       <span class="utilization-phase">{{ newPhase.name }}</span>
     {{/if}}
+    {{#if billable}}
+    <span class="utilization-billable" title="Billable">$</span>
+    {{/if}}
     {{/with}}
 
     {{!
@@ -36,7 +39,6 @@
       correctly trigger that event on their parent, create an invisible element
       that completely occupies the space of the parent.
     }}
-    <div class="firefox-drag-workaround"></div>
   </label>
 
   <div class="back">
@@ -72,6 +74,10 @@
       <option value="{{this}}">{{name}}</option>
       {{/each}}
     </select>
+
+    <input type="checkbox"
+      id="{{dayName}}{{employee.id}}-billable"
+      checked="{{newBillable}}" />
 
     <label class="set" for="{{dayName}}{{employee.id}}">Set</label>
   </div>

@@ -52,7 +52,7 @@
 }
 
 /* Weekly tool structure */
-.day input[type="checkbox"] {
+.day > input[type="checkbox"] {
   display: block;
   height: 1.2em;
   opacity: 0;
@@ -61,6 +61,21 @@
 .day select {
   width: 100%;
   margin-bottom: 0.3em;
+}
+
+.day .utilization-billable {
+  position: absolute;
+  right: 0.3em;
+  bottom: 0.3em;
+
+  width: 1.2em;
+  height: 1.2em;
+
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 100%;
+  font-size: 1.7em;
+  line-height: 1.2em;
+  text-align: center;
 }
 
 .flip .front {
