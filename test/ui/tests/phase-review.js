@@ -126,6 +126,34 @@ describe('phase review', function() {
       });
     });
 
+    it('correctly splits an existing multi-day utilization that spans a DST boundary', function() {
+      return driver.get('/date/2015-11-01/phase/4/')
+        .then(function() {
+          var putCount = 0;
+          var postCount = 0;
+          function handlePut(req, res) {
+            res.end();
+            assert.strictEqual(postCount, 0, 'Issues all `PUT` requests prior to `POST` requests.');
+            putCount += 1;
+          }
+          function handlePost(req, res) {
+            res.end();
+            assert.strictEqual(putCount, 1, 'Issues all `POST` requests following `PUT` requests.');
+            postCount += 1;
+          }
+
+          return Promise.all([
+              middleMan.once('PUT', '/v1/utilizations/:id', handlePut),
+              middleMan.once('POST', '/v1/utilizations', handlePost),
+              driver.editUtilization({
+                name: 'Jerry Seinfeld',
+                day: 'monday',
+                type: 'Education'
+              })
+            ]);
+        });
+    });
+
     describe('editing', function() {
       beforeEach(function() {
         return driver.viewWeek(1, 3);
